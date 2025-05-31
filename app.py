@@ -7,6 +7,7 @@ from datetime import datetime
 import plotly.express as px
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
+import numpy as np
 
 # Add project root to Python path
 project_root = Path(__file__).parent
@@ -530,9 +531,211 @@ st.markdown("""
     
     .viz-title {
         color: #1E88E5;
+        font-size: 2rem;
+        margin: 0 0 1.5rem 0;
+        text-align: center;
+        font-weight: 700;
+    }
+    
+    /* Overview container styles */
+    .overview-container {
+        background: white;
+        border-radius: 10px;
+        padding: 1.5rem;
+        margin: 1rem 0;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+    
+    .overview-title {
+        color: #1E88E5;
+        font-size: 2rem;
+        margin: 0 0 2rem 0;
+        text-align: center;
+        font-weight: 700;
+    }
+    
+    .info-box {
+        background: #f8f9fa;
+        border-radius: 8px;
+        padding: 1rem;
+        margin: 1rem 0;
+        border-left: 4px solid #1E88E5;
+    }
+    
+    .info-box-title {
+        color: #1E88E5;
+        font-size: 1.5rem;
+        margin: 0 0 1.2rem 0;
+        padding-bottom: 0.8rem;
+        border-bottom: 2px solid #dee2e6;
+        font-weight: 600;
+    }
+    
+    .column-box {
+        background: white;
+        border-radius: 6px;
+        padding: 1rem;
+        margin: 0.5rem 0;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+    
+    .column-box h5 {
+        color: #1E88E5;
+        margin: 0 0 0.5rem 0;
+        font-size: 1rem;
+    }
+    
+    .column-box p {
+        color: #666;
+        margin: 0.2rem 0;
+        font-size: 0.9rem;
+    }
+    
+    .stats-box {
+        background: white;
+        border-radius: 6px;
+        padding: 1rem;
+        margin: 1rem 0;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+    
+    .stats-box h5 {
+        color: #1E88E5;
+        margin: 0 0 1rem 0;
+        font-size: 1.1rem;
+    }
+    
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 1rem;
+    }
+    
+    .stat-item {
+        background: #f8f9fa;
+        padding: 0.8rem;
+        border-radius: 6px;
+        text-align: center;
+    }
+    
+    .stat-label {
+        display: block;
+        color: #666;
+        font-size: 0.9rem;
+        margin-bottom: 0.3rem;
+    }
+    
+    .stat-value {
+        display: block;
+        color: #1E88E5;
+        font-size: 1.2rem;
+        font-weight: 600;
+    }
+    
+    .insight-box {
+        background: white;
+        border-radius: 6px;
+        padding: 1rem;
+        margin: 0.5rem 0;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        border-left: 3px solid #4CAF50;
+    }
+    
+    .insight-box p {
+        margin: 0;
+        color: #333;
+        font-size: 1rem;
+    }
+    
+    /* Dashboard styles */
+    .dashboard-container {
+        background: white;
+        border-radius: 10px;
+        padding: 1.5rem;
+        margin: 1rem 0;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+    
+    .dashboard-title {
+        color: #1E88E5;
+        font-size: 2rem;
+        margin: 0 0 1.5rem 0;
+        text-align: center;
+        font-weight: 700;
+    }
+    
+    .metrics-container {
+        background: #f8f9fa;
+        border-radius: 8px;
+        padding: 1rem;
+        margin: 1rem 0;
+        border-left: 4px solid #1E88E5;
+    }
+    
+    .metrics-title {
+        color: #1E88E5;
         font-size: 1.3rem;
         margin: 0 0 1rem 0;
-        text-align: center;
+        padding-bottom: 0.5rem;
+        border-bottom: 1px solid #dee2e6;
+    }
+    
+    .dashboard-section {
+        background: #f8f9fa;
+        border-radius: 8px;
+        padding: 1rem;
+        margin: 1.5rem 0;
+        border-left: 4px solid #1E88E5;
+    }
+    
+    .section-title {
+        color: #1E88E5;
+        font-size: 1.3rem;
+        margin: 0 0 1rem 0;
+        padding-bottom: 0.5rem;
+        border-bottom: 1px solid #dee2e6;
+    }
+    
+    /* Metric card styles */
+    [data-testid="stMetricValue"] {
+        font-size: 1.8rem !important;
+        font-weight: 600 !important;
+    }
+    
+    [data-testid="stMetricLabel"] {
+        font-size: 1.1rem !important;
+        color: #666 !important;
+    }
+    
+    .cleaning-steps-container {
+        background: #f8f9fa;
+        border-radius: 8px;
+        padding: 1rem;
+        margin: 1rem 0;
+        border-left: 4px solid #4CAF50;
+    }
+    
+    .cleaning-step {
+        background: white;
+        border-radius: 6px;
+        padding: 0.8rem;
+        margin: 0.5rem 0;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        border-left: 3px solid #4CAF50;
+    }
+    
+    .cleaning-step p {
+        margin: 0;
+        color: #333;
+        font-size: 1rem;
+    }
+    
+    .data-container {
+        background: #f8f9fa;
+        border-radius: 8px;
+        padding: 1rem;
+        margin: 1rem 0;
+        border-left: 4px solid #1E88E5;
     }
 </style>
 """, unsafe_allow_html=True)
@@ -554,6 +757,10 @@ if 'sidebar_expanded' not in st.session_state:
     st.session_state.sidebar_expanded = True
 if 'show_visualizations' not in st.session_state:
     st.session_state.show_visualizations = False
+if 'show_general_overview' not in st.session_state:
+    st.session_state.show_general_overview = False
+if 'show_cleaned_data' not in st.session_state:
+    st.session_state.show_cleaned_data = False
 
 def create_upload_area():
     """Create a styled upload area with drag and drop functionality."""
@@ -782,6 +989,106 @@ def display_data_preview(df):
             key='download-csv'
         )
 
+def display_general_overview(df):
+    """Display general overview of the data in styled boxes."""
+    st.markdown("""
+        <div class='overview-container'>
+            <h3 class='overview-title'>📊 Məlumatların Ümumi Baxışı</h3>
+        </div>
+    """, unsafe_allow_html=True)
+    
+    # Basic Information Box
+    st.markdown("""
+        <div class='info-box'>
+            <h4 class='info-box-title'>📋 Əsas Məlumatlar</h4>
+        </div>
+    """, unsafe_allow_html=True)
+    
+    col1, col2, col3 = st.columns(3)
+    with col1:
+        st.metric("Sətir sayı", f"{len(df):,}")
+    with col2:
+        st.metric("Sütun sayı", f"{len(df.columns):,}")
+    with col3:
+        st.metric("Unikal kurslar", f"{df['Course Name'].nunique():,}")
+    
+    # Column Information
+    st.markdown("""
+        <div class='info-box'>
+            <h4 class='info-box-title'>📊 Sütunlar</h4>
+        </div>
+    """, unsafe_allow_html=True)
+    
+    cols = st.columns(len(df.columns))
+    for idx, col in enumerate(df.columns):
+        with cols[idx]:
+            st.markdown(f"""
+                <div class='column-box'>
+                    <h5>{col}</h5>
+                    <p>Tip: {df[col].dtype}</p>
+                    <p>Unikal: {df[col].nunique():,}</p>
+                </div>
+            """, unsafe_allow_html=True)
+    
+    # Statistics Box
+    st.markdown("""
+        <div class='info-box'>
+            <h4 class='info-box-title'>📈 Statistik Məlumatlar</h4>
+        </div>
+    """, unsafe_allow_html=True)
+    
+    numeric_cols = df.select_dtypes(include=[np.number]).columns
+    for col in numeric_cols:
+        st.markdown(f"""
+            <div class='stats-box'>
+                <h5>{col}</h5>
+                <div class='stats-grid'>
+                    <div class='stat-item'>
+                        <span class='stat-label'>Minimum</span>
+                        <span class='stat-value'>{df[col].min():,.0f}</span>
+                    </div>
+                    <div class='stat-item'>
+                        <span class='stat-label'>Maksimum</span>
+                        <span class='stat-value'>{df[col].max():,.0f}</span>
+                    </div>
+                    <div class='stat-item'>
+                        <span class='stat-label'>Ortalama</span>
+                        <span class='stat-value'>{df[col].mean():,.0f}</span>
+                    </div>
+                    <div class='stat-item'>
+                        <span class='stat-label'>Median</span>
+                        <span class='stat-value'>{df[col].median():,.0f}</span>
+                    </div>
+                </div>
+            </div>
+        """, unsafe_allow_html=True)
+    
+    # Key Insights Box
+    st.markdown("""
+        <div class='info-box'>
+            <h4 class='info-box-title'>💡 Əsas Müşahidələr</h4>
+        </div>
+    """, unsafe_allow_html=True)
+    
+    # Calculate key insights
+    top_enrollment = df.loc[df['Enrollments'].idxmax()]
+    top_active = df.loc[df['Active Enrollments'].idxmax()]
+    top_completion = df.loc[df['Completions'].idxmax()]
+    
+    insights = [
+        f"🎓 Ən çox qeydiyyat: {top_enrollment['Course Name']} ({top_enrollment['Enrollments']:,} tələbə)",
+        f"👥 Ən çox aktiv tələbə: {top_active['Course Name']} ({top_active['Active Enrollments']:,} tələbə)",
+        f"✅ Ən yüksək tamamlama: {top_completion['Course Name']} ({top_completion['Completions']:,} tələbə)",
+        f"📚 Ən populyar sahə: {df['Course Domain'].value_counts().index[0]} ({df['Course Domain'].value_counts().iloc[0]:,} kurs)"
+    ]
+    
+    for insight in insights:
+        st.markdown(f"""
+            <div class='insight-box'>
+                <p>{insight}</p>
+            </div>
+        """, unsafe_allow_html=True)
+
 def get_general_overview_prompt(df):
     """Generate prompt for general data overview."""
     return f"""Bu məlumatlar haqqında ümumi məlumat ver. Aşağıdakı məqamları əhatə et:
@@ -828,104 +1135,372 @@ Məlumatlar:
 """
 
 def create_visualizations(df):
-    """Create and display multiple visualizations for the data."""
+    """Create and display multiple visualizations for the data in a dashboard layout."""
     # Create a container for visualizations
     viz_container = st.container()
     
     with viz_container:
         st.markdown("""
-            <div class='viz-container'>
-                <h3 class='viz-title'>📊 Məlumat Vizualizasiyaları</h3>
+            <div class='dashboard-container'>
+                <h3 class='dashboard-title'>📊 Məlumat Analiz Dashboard</h3>
             </div>
         """, unsafe_allow_html=True)
         
         try:
-            # 1. Enrollment Statistics
-            if 'Enrollments' in df.columns and 'Active Enrollments' in df.columns:
-                fig1 = make_subplots(rows=1, cols=2, subplot_titles=('Qeydiyyatlar', 'Aktiv Qeydiyyatlar'))
-                
-                fig1.add_trace(
-                    go.Bar(x=df['Course Domain'], y=df['Enrollments'], name='Qeydiyyatlar'),
-                    row=1, col=1
-                )
-                
-                fig1.add_trace(
-                    go.Bar(x=df['Course Domain'], y=df['Active Enrollments'], name='Aktiv Qeydiyyatlar'),
-                    row=1, col=2
-                )
-                
-                fig1.update_layout(
-                    height=500,
-                    showlegend=True,
-                    title_text="Kurs Qeydiyyatları və Aktiv Tələbələr",
-                    title_x=0.5
-                )
-                st.plotly_chart(fig1, use_container_width=True)
+            # Calculate all necessary statistics upfront
+            domain_stats = df.groupby('Course Domain').agg({
+                'Enrollments': 'sum',
+                'Active Enrollments': 'sum',
+                'Completions': 'sum'
+            }).reset_index()
             
-            # 2. Completion Rate
-            if 'Enrollments' in df.columns and 'Completions' in df.columns:
-                df['Completion Rate'] = (df['Completions'] / df['Enrollments'] * 100).round(2)
-                
-                fig2 = px.bar(
-                    df,
-                    x='Course Domain',
-                    y='Completion Rate',
-                    title='Kurs Tamamlama Faizi',
-                    labels={'Completion Rate': 'Tamamlama Faizi (%)', 'Course Domain': 'Kurs Sahəsi'},
-                    color='Completion Rate',
-                    color_continuous_scale='Viridis'
-                )
-                
-                fig2.update_layout(
-                    height=500,
-                    title_x=0.5,
-                    showlegend=False
-                )
-                st.plotly_chart(fig2, use_container_width=True)
+            # Calculate completion rates safely
+            domain_stats['Tamamlama Faizi'] = (domain_stats['Completions'] / domain_stats['Enrollments'] * 100).round(2)
+            df['Tamamlama Faizi'] = (df['Completions'] / df['Enrollments'] * 100).round(2)
             
-            # 3. Course Distribution
-            if 'Course Domain' in df.columns:
-                domain_counts = df['Course Domain'].value_counts()
-                
-                fig3 = px.pie(
-                    values=domain_counts.values,
-                    names=domain_counts.index,
+            # Sort by enrollments
+            domain_stats = domain_stats.sort_values('Enrollments', ascending=False)
+            
+            # Dashboard Header with Key Metrics
+            st.markdown("""
+                <div class='metrics-container'>
+                    <h4 class='metrics-title'>📈 Əsas Göstəricilər</h4>
+                </div>
+            """, unsafe_allow_html=True)
+            
+            # Key metrics in a row
+            col1, col2, col3, col4 = st.columns(4)
+            with col1:
+                st.metric("Ümumi Qeydiyyat", f"{df['Enrollments'].sum():,}")
+            with col2:
+                st.metric("Aktiv Tələbələr", f"{df['Active Enrollments'].sum():,}")
+            with col3:
+                st.metric("Tamamlanan Kurslar", f"{df['Completions'].sum():,}")
+            with col4:
+                avg_completion = (df['Completions'].sum() / df['Enrollments'].sum() * 100).round(1)
+                st.metric("Orta Tamamlama Faizi", f"{avg_completion}%")
+            
+            # First Row: Course Domain Analysis
+            st.markdown("""
+                <div class='dashboard-section'>
+                    <h4 class='section-title'>🎯 Kurs Sahələrinin Analizi</h4>
+                </div>
+            """, unsafe_allow_html=True)
+            
+            # Create two columns for domain analysis
+            col1, col2 = st.columns(2)
+            
+            with col1:
+                # Domain Distribution Donut Chart
+                fig_domain_donut = px.pie(
+                    domain_stats,
+                    values='Enrollments',
+                    names='Course Domain',
                     title='Kurs Sahələrinin Paylanması',
-                    hole=0.4
+                    hole=0.6,
+                    color_discrete_sequence=px.colors.qualitative.Set3
                 )
-                
-                fig3.update_layout(
-                    height=500,
+                fig_domain_donut.update_layout(
+                    height=400,
                     title_x=0.5,
-                    showlegend=True
+                    showlegend=True,
+                    legend=dict(
+                        yanchor="top",
+                        y=0.99,
+                        xanchor="left",
+                        x=1.05
+                    )
                 )
-                st.plotly_chart(fig3, use_container_width=True)
+                st.plotly_chart(fig_domain_donut, use_container_width=True)
             
-            # 4. Enrollment Trends
-            if 'Enrollments' in df.columns and 'Course Name' in df.columns:
-                # Get top 10 courses by enrollment
-                top_courses = df.nlargest(10, 'Enrollments')
-                
-                fig4 = px.bar(
-                    top_courses,
-                    x='Course Name',
-                    y='Enrollments',
-                    title='Ən Çox Qeydiyyat Olan 10 Kurs',
-                    labels={'Enrollments': 'Qeydiyyat Sayı', 'Course Name': 'Kurs Adı'},
-                    color='Enrollments',
-                    color_continuous_scale='Plasma'
+            with col2:
+                # Domain Statistics Bar Chart
+                fig_domain_stats = px.bar(
+                    domain_stats,
+                    x='Course Domain',
+                    y=['Enrollments', 'Active Enrollments', 'Completions'],
+                    title='Kurs Sahələrinə Görə Statistikalar',
+                    barmode='group',
+                    color_discrete_sequence=['#1E88E5', '#4CAF50', '#FF9800'],
+                    labels={
+                        'Course Domain': 'Kurs Sahəsi',
+                        'value': 'Say',
+                        'variable': 'Statistika'
+                    }
                 )
-                
-                fig4.update_layout(
-                    height=500,
+                fig_domain_stats.update_layout(
+                    height=400,
                     title_x=0.5,
-                    xaxis_tickangle=-45,
-                    showlegend=False
+                    showlegend=True,
+                    legend=dict(
+                        yanchor="top",
+                        y=0.99,
+                        xanchor="left",
+                        x=1.05
+                    ),
+                    xaxis_tickangle=-45
                 )
-                st.plotly_chart(fig4, use_container_width=True)
+                st.plotly_chart(fig_domain_stats, use_container_width=True)
+            
+            # Second Row: Top Courses Analysis
+            st.markdown("""
+                <div class='dashboard-section'>
+                    <h4 class='section-title'>🏆 Ən Populyar Kurslar</h4>
+                </div>
+            """, unsafe_allow_html=True)
+            
+            # Get top courses
+            top_enrollment = df.nlargest(5, 'Enrollments')
+            top_completion = df.nlargest(5, 'Tamamlama Faizi')
+            
+            # Create two columns for top courses
+            col1, col2 = st.columns(2)
+            
+            with col1:
+                # Top Courses by Enrollment - Horizontal Bar Chart
+                fig_top_enroll = px.bar(
+                    top_enrollment,
+                    y='Course Name',
+                    x='Enrollments',
+                    title='Ən Çox Qeydiyyat Olan 5 Kurs',
+                    color='Enrollments',
+                    color_continuous_scale='Blues',
+                    text='Enrollments',
+                    orientation='h'
+                )
+                fig_top_enroll.update_layout(
+                    height=400,
+                    title_x=0.5,
+                    showlegend=False,
+                    yaxis={'categoryorder': 'total ascending'}
+                )
+                fig_top_enroll.update_traces(texttemplate='%{text:,}', textposition='outside')
+                st.plotly_chart(fig_top_enroll, use_container_width=True)
+            
+            with col2:
+                # Top Courses by Completion Rate - Horizontal Bar Chart
+                fig_top_comp = px.bar(
+                    top_completion,
+                    y='Course Name',
+                    x='Tamamlama Faizi',
+                    title='Ən Yüksək Tamamlama Faizinə Malik 5 Kurs',
+                    color='Tamamlama Faizi',
+                    color_continuous_scale='Greens',
+                    text='Tamamlama Faizi',
+                    orientation='h'
+                )
+                fig_top_comp.update_layout(
+                    height=400,
+                    title_x=0.5,
+                    showlegend=False,
+                    yaxis={'categoryorder': 'total ascending'}
+                )
+                fig_top_comp.update_traces(texttemplate='%{text:.1f}%', textposition='outside')
+                st.plotly_chart(fig_top_comp, use_container_width=True)
+            
+            # Third Row: Distribution Analysis
+            st.markdown("""
+                <div class='dashboard-section'>
+                    <h4 class='section-title'>📊 Paylanma Analizi</h4>
+                </div>
+            """, unsafe_allow_html=True)
+            
+            # Create two columns for distribution analysis
+            col1, col2 = st.columns(2)
+            
+            with col1:
+                # Enrollment Distribution Histogram
+                fig_enroll_hist = px.histogram(
+                    df,
+                    x='Enrollments',
+                    nbins=20,
+                    title='Qeydiyyatların Paylanması',
+                    color_discrete_sequence=['#1E88E5']
+                )
+                fig_enroll_hist.update_layout(
+                    height=400,
+                    title_x=0.5,
+                    showlegend=False,
+                    xaxis_title='Qeydiyyat Sayı',
+                    yaxis_title='Kurs Sayı'
+                )
+                st.plotly_chart(fig_enroll_hist, use_container_width=True)
+            
+            with col2:
+                # Completion Rate Distribution Histogram
+                fig_comp_hist = px.histogram(
+                    df,
+                    x='Tamamlama Faizi',
+                    nbins=20,
+                    title='Tamamlama Faizinin Paylanması',
+                    color_discrete_sequence=['#4CAF50']
+                )
+                fig_comp_hist.update_layout(
+                    height=400,
+                    title_x=0.5,
+                    showlegend=False,
+                    xaxis_title='Tamamlama Faizi (%)',
+                    yaxis_title='Kurs Sayı'
+                )
+                st.plotly_chart(fig_comp_hist, use_container_width=True)
+            
+            # Fourth Row: Scatter Plot Analysis
+            st.markdown("""
+                <div class='dashboard-section'>
+                    <h4 class='section-title'>🔍 Əlaqələr Analizi</h4>
+                </div>
+            """, unsafe_allow_html=True)
+            
+            # Create scatter plot
+            fig_scatter = px.scatter(
+                df,
+                x='Enrollments',
+                y='Completions',
+                color='Course Domain',
+                size='Active Enrollments',
+                hover_data=['Course Name', 'Tamamlama Faizi'],
+                title='Qeydiyyat və Tamamlama Əlaqəsi',
+                labels={
+                    'Enrollments': 'Qeydiyyat Sayı',
+                    'Completions': 'Tamamlanma Sayı',
+                    'Course Domain': 'Kurs Sahəsi',
+                    'Active Enrollments': 'Aktiv Tələbələr',
+                    'Tamamlama Faizi': 'Tamamlama Faizi (%)'
+                }
+            )
+            
+            fig_scatter.update_layout(
+                height=500,
+                title_x=0.5,
+                showlegend=True,
+                legend=dict(
+                    yanchor="top",
+                    y=0.99,
+                    xanchor="left",
+                    x=1.05
+                )
+            )
+            
+            st.plotly_chart(fig_scatter, use_container_width=True)
             
         except Exception as e:
             st.error(f"Vizualizasiya yaradılarkən xəta baş verdi: {str(e)}")
+
+def clean_dataset(df):
+    """Clean the dataset and return both cleaned dataframe and cleaning steps."""
+    cleaning_steps = []
+    df_cleaned = df.copy()
+    
+    # 1. Handle missing values
+    missing_before = df_cleaned.isnull().sum().sum()
+    df_cleaned = df_cleaned.fillna({
+        'Enrollments': 0,
+        'Active Enrollments': 0,
+        'Completions': 0,
+        'Course Domain': 'Digər',
+        'Course Name': 'Adı Məlum Değil'
+    })
+    missing_after = df_cleaned.isnull().sum().sum()
+    if missing_before > 0:
+        cleaning_steps.append(f"✅ {missing_before} boş dəyər dolduruldu")
+    
+    # 2. Remove duplicates
+    duplicates_before = df_cleaned.duplicated().sum()
+    df_cleaned = df_cleaned.drop_duplicates()
+    duplicates_after = df_cleaned.duplicated().sum()
+    if duplicates_before > 0:
+        cleaning_steps.append(f"✅ {duplicates_before} təkrarlanan qeyd silindi")
+    
+    # 3. Format Course Names
+    df_cleaned['Course Name'] = df_cleaned['Course Name'].str.strip()
+    df_cleaned['Course Domain'] = df_cleaned['Course Domain'].str.strip()
+    
+    # 4. Calculate and add Completion Rate
+    df_cleaned['Tamamlama Faizi'] = (df_cleaned['Completions'] / df_cleaned['Enrollments'] * 100).round(2)
+    cleaning_steps.append("✅ Tamamlama faizi hesablandı")
+    
+    # 5. Round numeric columns
+    numeric_cols = ['Enrollments', 'Active Enrollments', 'Completions']
+    df_cleaned[numeric_cols] = df_cleaned[numeric_cols].round(0)
+    cleaning_steps.append("✅ Rəqəmsal dəyərlər yuvarlaqlaşdırıldı")
+    
+    # 6. Sort by enrollments
+    df_cleaned = df_cleaned.sort_values('Enrollments', ascending=False)
+    cleaning_steps.append("✅ Məlumatlar qeydiyyat sayına görə sıralandı")
+    
+    return df_cleaned, cleaning_steps
+
+def display_cleaned_data(df):
+    """Display cleaned data in a table format with download option."""
+    st.markdown("""
+        <div class='dashboard-container'>
+            <h3 class='dashboard-title'>🧹 Təmizlənmiş Məlumatlar</h3>
+        </div>
+    """, unsafe_allow_html=True)
+    
+    # Clean the dataset
+    df_cleaned, cleaning_steps = clean_dataset(df)
+    
+    # Display cleaning steps
+    st.markdown("""
+        <div class='cleaning-steps-container'>
+            <h4 class='section-title'>🔄 Təmizləmə Addımları</h4>
+        </div>
+    """, unsafe_allow_html=True)
+    
+    # Show cleaning steps in a nice format
+    for step in cleaning_steps:
+        st.markdown(f"""
+            <div class='cleaning-step'>
+                <p>{step}</p>
+            </div>
+        """, unsafe_allow_html=True)
+    
+    # Display data statistics
+    st.markdown("""
+        <div class='stats-container'>
+            <h4 class='section-title'>📊 Təmizlənmiş Məlumatların Statistikası</h4>
+        </div>
+    """, unsafe_allow_html=True)
+    
+    col1, col2, col3, col4 = st.columns(4)
+    with col1:
+        st.metric("Sətir sayı", f"{len(df_cleaned):,}")
+    with col2:
+        st.metric("Sütun sayı", f"{len(df_cleaned.columns):,}")
+    with col3:
+        st.metric("Boş dəyərlər", f"{df_cleaned.isnull().sum().sum():,}")
+    with col4:
+        st.metric("Təkrarlanan qeydlər", f"{df_cleaned.duplicated().sum():,}")
+    
+    # Display the cleaned data
+    st.markdown("""
+        <div class='data-container'>
+            <h4 class='section-title'>📋 Təmizlənmiş Məlumatlar</h4>
+        </div>
+    """, unsafe_allow_html=True)
+    
+    # Show the data with nice formatting
+    st.dataframe(
+        df_cleaned.style.format({
+            'Enrollments': '{:,.0f}',
+            'Active Enrollments': '{:,.0f}',
+            'Completions': '{:,.0f}',
+            'Tamamlama Faizi': '{:.2f}%'
+        }),
+        use_container_width=True,
+        height=400
+    )
+    
+    # Add download button for cleaned data
+    csv = df_cleaned.to_csv(index=False).encode('utf-8')
+    st.download_button(
+        "📥 Təmizlənmiş Məlumatları Yüklə",
+        csv,
+        "temizlenmis_melumatlar.csv",
+        "text/csv",
+        key='download-cleaned-csv'
+    )
 
 def display_data_actions(df):
     """Display action buttons for different data views."""
@@ -940,30 +1515,30 @@ def display_data_actions(df):
     
     with col1:
         if st.button("👁️ Ümumi Baxış", use_container_width=True):
-            with st.spinner("Ümumi məlumatlar hazırlanır..."):
-                prompt = get_general_overview_prompt(df)
-                response = process_query(prompt, df)
-                st.session_state.chat_history.append({"role": "user", "content": "Ümumi məlumatları göstər"})
-                st.session_state.chat_history.append({"role": "assistant", "content": response})
-                st.session_state.show_visualizations = False
-                st.rerun()
+            st.session_state.show_visualizations = False
+            st.session_state.show_general_overview = True
+            st.session_state.show_cleaned_data = False
+            st.session_state.chat_history.append({"role": "user", "content": "Ümumi məlumatları göstər"})
+            st.session_state.chat_history.append({"role": "assistant", "content": "Ümumi məlumatlar yuxarıda göstərilir."})
+            st.rerun()
     
     with col2:
         if st.button("📈 Vizualizasiyalar", use_container_width=True):
             st.session_state.show_visualizations = not st.session_state.show_visualizations
+            st.session_state.show_general_overview = False
+            st.session_state.show_cleaned_data = False
             st.session_state.chat_history.append({"role": "user", "content": "Vizualizasiyaları göstər"})
             st.session_state.chat_history.append({"role": "assistant", "content": "Vizualizasiyalar yaradıldı və yuxarıda göstərilir."})
             st.rerun()
     
     with col3:
         if st.button("🧹 Təmiz Məlumatlar", use_container_width=True):
-            with st.spinner("Təmizləmə təklifləri hazırlanır..."):
-                prompt = get_cleaned_data_prompt(df)
-                response = process_query(prompt, df)
-                st.session_state.chat_history.append({"role": "user", "content": "Məlumatları təmizləmək üçün təkliflər ver"})
-                st.session_state.chat_history.append({"role": "assistant", "content": response})
-                st.session_state.show_visualizations = False
-                st.rerun()
+            st.session_state.show_visualizations = False
+            st.session_state.show_general_overview = False
+            st.session_state.show_cleaned_data = True
+            st.session_state.chat_history.append({"role": "user", "content": "Təmizlənmiş məlumatları göstər"})
+            st.session_state.chat_history.append({"role": "assistant", "content": "Təmizlənmiş məlumatlar yuxarıda göstərilir."})
+            st.rerun()
 
 def main():
     # Create header
@@ -980,6 +1555,8 @@ def main():
         st.session_state.upload_history = []
     if 'selected_history' not in st.session_state:
         st.session_state.selected_history = None
+    if 'show_cleaned_data' not in st.session_state:
+        st.session_state.show_cleaned_data = False
 
     # Create sidebar content
     with st.sidebar:
@@ -1038,64 +1615,64 @@ def main():
             # Display action buttons
             display_data_actions(st.session_state.df)
             
+            # Show general overview if enabled
+            if st.session_state.show_general_overview:
+                display_general_overview(st.session_state.df)
+            
             # Show visualizations if enabled
             if st.session_state.show_visualizations:
                 create_visualizations(st.session_state.df)
             
-            # Add a button to show/hide data preview
-            if st.button("📊 Məlumatları Göstər/Gizlət"):
-                if 'show_data_preview' not in st.session_state:
-                    st.session_state.show_data_preview = True
-                else:
-                    st.session_state.show_data_preview = not st.session_state.show_data_preview
-                st.rerun()
+            # Show cleaned data if enabled
+            if st.session_state.show_cleaned_data:
+                display_cleaned_data(st.session_state.df)
             
-            # Show data preview if enabled
-            if st.session_state.get('show_data_preview', False):
-                display_data_preview(st.session_state.df)
-            
-            st.markdown("""
-                <div class='chat-container'>
-                    <h2 class='chat-title'>Sualınızı Yazın</h2>
-                </div>
-            """, unsafe_allow_html=True)
-            
-            # Display chat history
-            chat_container = st.container()
-            with chat_container:
-                for message in st.session_state.chat_history:
-                    if message["role"] == "user":
-                        st.markdown(f"**Siz:** {message['content']}")
-                    else:
-                        st.markdown(f"**Bot:** {message['content']}")
-            
-            # Chat input
-            if prompt := st.chat_input("Sualınızı yazın..."):
-                # Add user message to chat history
-                st.session_state.chat_history.append({"role": "user", "content": prompt})
+            # Only show chat interface if no other view is active
+            if not (st.session_state.show_general_overview or 
+                    st.session_state.show_visualizations or 
+                    st.session_state.show_cleaned_data):
+                st.markdown("""
+                    <div class='chat-container'>
+                        <h2 class='chat-title'>Sualınızı Yazın</h2>
+                    </div>
+                """, unsafe_allow_html=True)
                 
-                # Display user message
-                with st.chat_message("user"):
-                    st.write(prompt)
+                # Display chat history
+                chat_container = st.container()
+                with chat_container:
+                    for message in st.session_state.chat_history:
+                        if message["role"] == "user":
+                            st.markdown(f"**Siz:** {message['content']}")
+                        else:
+                            st.markdown(f"**Bot:** {message['content']}")
                 
-                # Process query and get response
-                with st.spinner("Sualınız emal edilir..."):
-                    response = process_query(prompt, st.session_state.df)
-                
-                # Add assistant response to chat history
-                st.session_state.chat_history.append({"role": "assistant", "content": response})
-                
-                # Display assistant response
-                with st.chat_message("assistant"):
-                    st.write(response)
+                # Chat input
+                if prompt := st.chat_input("Sualınızı yazın..."):
+                    # Add user message to chat history
+                    st.session_state.chat_history.append({"role": "user", "content": prompt})
                     
-                    # If response includes visualization, display it
-                    if "visualization" in response:
-                        try:
-                            fig = create_visualization(st.session_state.df, prompt)
-                            st.plotly_chart(fig, use_container_width=True)
-                        except Exception as e:
-                            st.error(f"Vizualizasiya yaradılarkən xəta baş verdi: {str(e)}")
+                    # Display user message
+                    with st.chat_message("user"):
+                        st.write(prompt)
+                    
+                    # Process query and get response
+                    with st.spinner("Sualınız emal edilir..."):
+                        response = process_query(prompt, st.session_state.df)
+                    
+                    # Add assistant response to chat history
+                    st.session_state.chat_history.append({"role": "assistant", "content": response})
+                    
+                    # Display assistant response
+                    with st.chat_message("assistant"):
+                        st.write(response)
+                        
+                        # If response includes visualization, display it
+                        if "visualization" in response:
+                            try:
+                                fig = create_visualization(st.session_state.df, prompt)
+                                st.plotly_chart(fig, use_container_width=True)
+                            except Exception as e:
+                                st.error(f"Vizualizasiya yaradılarkən xəta baş verdi: {str(e)}")
 
 if __name__ == "__main__":
     main() 
