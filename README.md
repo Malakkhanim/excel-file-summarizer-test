@@ -93,12 +93,8 @@ streamlit run app.py
 
 Contributions are welcome! Please feel free to submit a Pull Request. For major changes, please open an issue first to discuss what you would like to change.
 
-## License
-
-This project is licensed under the MIT License. See the `LICENSE` file for details.
 
 ## Contact
 
 For questions and suggestions about the project:
-- Email: your.email@example.com
-- GitHub Issues: [Create an issue](https://github.com/yourusername/excel-data-analysis-bot/issues) 
+- Email: rustamovamlk@gmail.com
