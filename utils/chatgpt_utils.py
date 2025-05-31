@@ -8,8 +8,19 @@ from config.settings import get_settings
 # Load environment variables
 load_dotenv()
 
+# Get API key from environment
+api_key = os.getenv("OPENAI_API_KEY")
+if not api_key:
+    raise ValueError("""
+        OpenAI API key not found! Please follow these steps:
+        1. Create a file named '.env' in the project root directory
+        2. Add your OpenAI API key like this: OPENAI_API_KEY=your-api-key-here
+        3. Make sure to replace 'your-api-key-here' with your actual OpenAI API key
+        4. Restart the application
+    """)
+
 # Initialize OpenAI client
-client = openai.OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+client = openai.OpenAI(api_key=api_key)
 
 def get_chatgpt_response(query: str, df: pd.DataFrame) -> str:
     """
