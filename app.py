@@ -4,6 +4,9 @@ from pathlib import Path
 import sys
 import base64
 from datetime import datetime
+import plotly.express as px
+import plotly.graph_objects as go
+from plotly.subplots import make_subplots
 
 # Add project root to Python path
 project_root = Path(__file__).parent
@@ -464,6 +467,73 @@ st.markdown("""
         font-size: 1rem !important;
         color: #666 !important;
     }
+    
+    /* Action buttons container styles */
+    .action-buttons-container {
+        background: white;
+        border-radius: 10px;
+        padding: 1.5rem;
+        margin: 1rem 0;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+    
+    .action-title {
+        color: #1E88E5;
+        font-size: 1.3rem;
+        margin: 0 0 1rem 0;
+        text-align: center;
+    }
+    
+    /* Button styles */
+    .stButton > button {
+        background-color: #1E88E5;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        padding: 0.8rem 1rem;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        height: 3.5rem;
+    }
+    
+    .stButton > button:hover {
+        background-color: #1565C0;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+    
+    /* Different colors for different actions */
+    .stButton > button[data-testid="baseButton-secondary"] {
+        background-color: #4CAF50;
+    }
+    
+    .stButton > button[data-testid="baseButton-secondary"]:hover {
+        background-color: #388E3C;
+    }
+    
+    .stButton > button[data-testid="baseButton-tertiary"] {
+        background-color: #FF9800;
+    }
+    
+    .stButton > button[data-testid="baseButton-tertiary"]:hover {
+        background-color: #F57C00;
+    }
+    
+    /* Visualization container styles */
+    .viz-container {
+        background: white;
+        border-radius: 10px;
+        padding: 1.5rem;
+        margin: 1rem 0;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+    
+    .viz-title {
+        color: #1E88E5;
+        font-size: 1.3rem;
+        margin: 0 0 1rem 0;
+        text-align: center;
+    }
 </style>
 """, unsafe_allow_html=True)
 
@@ -482,6 +552,8 @@ if 'history_slider_position' not in st.session_state:
     st.session_state.history_slider_position = 0
 if 'sidebar_expanded' not in st.session_state:
     st.session_state.sidebar_expanded = True
+if 'show_visualizations' not in st.session_state:
+    st.session_state.show_visualizations = False
 
 def create_upload_area():
     """Create a styled upload area with drag and drop functionality."""
@@ -710,6 +782,189 @@ def display_data_preview(df):
             key='download-csv'
         )
 
+def get_general_overview_prompt(df):
+    """Generate prompt for general data overview."""
+    return f"""Bu məlumatlar haqqında ümumi məlumat ver. Aşağıdakı məqamları əhatə et:
+1. Məlumatların ümumi xarakteristikası
+2. Əsas statistik göstəricilər
+3. Məlumatların keyfiyyəti (boş dəyərlər, təkrarlanan məlumatlar)
+4. Ən maraqlı və ya əhəmiyyətli müşahidələr
+5. Məlumatların potensial istifadə sahələri
+
+Məlumatlar:
+- {len(df)} sətir
+- {len(df.columns)} sütun
+- Sütunlar: {', '.join(df.columns)}
+"""
+
+def get_visualization_prompt(df):
+    """Generate prompt for data visualization suggestions."""
+    return f"""Bu məlumatlar üçün ən uyğun vizualizasiyaları təklif et. Hər bir sütunun tipini nəzərə alaraq:
+1. Hansı növ qrafiklər ən uyğun olar?
+2. Hansı sütunlar arasında əlaqələr var?
+3. Hansı trendlər və ya patternlər görünür?
+4. Hansı vizualizasiyalar ən çox insight verəcək?
+
+Məlumatlar:
+- {len(df)} sətir
+- {len(df.columns)} sütun
+- Sütunlar və tipləri:
+{chr(10).join([f'- {col}: {df[col].dtype}' for col in df.columns])}
+"""
+
+def get_cleaned_data_prompt(df):
+    """Generate prompt for data cleaning suggestions."""
+    return f"""Bu məlumatları təmizləmək üçün təkliflər ver. Aşağıdakı məqamları əhatə et:
+1. Boş dəyərlərin analizi və həlli
+2. Təkrarlanan məlumatların aşkarlanması
+3. Sütunların formatlarının yoxlanılması
+4. Anomal dəyərlərin (outliers) aşkarlanması
+5. Məlumatların strukturunun yaxşılaşdırılması
+
+Məlumatlar:
+- {len(df)} sətir
+- {len(df.columns)} sütun
+- Sütunlar: {', '.join(df.columns)}
+"""
+
+def create_visualizations(df):
+    """Create and display multiple visualizations for the data."""
+    # Create a container for visualizations
+    viz_container = st.container()
+    
+    with viz_container:
+        st.markdown("""
+            <div class='viz-container'>
+                <h3 class='viz-title'>📊 Məlumat Vizualizasiyaları</h3>
+            </div>
+        """, unsafe_allow_html=True)
+        
+        try:
+            # 1. Enrollment Statistics
+            if 'Enrollments' in df.columns and 'Active Enrollments' in df.columns:
+                fig1 = make_subplots(rows=1, cols=2, subplot_titles=('Qeydiyyatlar', 'Aktiv Qeydiyyatlar'))
+                
+                fig1.add_trace(
+                    go.Bar(x=df['Course Domain'], y=df['Enrollments'], name='Qeydiyyatlar'),
+                    row=1, col=1
+                )
+                
+                fig1.add_trace(
+                    go.Bar(x=df['Course Domain'], y=df['Active Enrollments'], name='Aktiv Qeydiyyatlar'),
+                    row=1, col=2
+                )
+                
+                fig1.update_layout(
+                    height=500,
+                    showlegend=True,
+                    title_text="Kurs Qeydiyyatları və Aktiv Tələbələr",
+                    title_x=0.5
+                )
+                st.plotly_chart(fig1, use_container_width=True)
+            
+            # 2. Completion Rate
+            if 'Enrollments' in df.columns and 'Completions' in df.columns:
+                df['Completion Rate'] = (df['Completions'] / df['Enrollments'] * 100).round(2)
+                
+                fig2 = px.bar(
+                    df,
+                    x='Course Domain',
+                    y='Completion Rate',
+                    title='Kurs Tamamlama Faizi',
+                    labels={'Completion Rate': 'Tamamlama Faizi (%)', 'Course Domain': 'Kurs Sahəsi'},
+                    color='Completion Rate',
+                    color_continuous_scale='Viridis'
+                )
+                
+                fig2.update_layout(
+                    height=500,
+                    title_x=0.5,
+                    showlegend=False
+                )
+                st.plotly_chart(fig2, use_container_width=True)
+            
+            # 3. Course Distribution
+            if 'Course Domain' in df.columns:
+                domain_counts = df['Course Domain'].value_counts()
+                
+                fig3 = px.pie(
+                    values=domain_counts.values,
+                    names=domain_counts.index,
+                    title='Kurs Sahələrinin Paylanması',
+                    hole=0.4
+                )
+                
+                fig3.update_layout(
+                    height=500,
+                    title_x=0.5,
+                    showlegend=True
+                )
+                st.plotly_chart(fig3, use_container_width=True)
+            
+            # 4. Enrollment Trends
+            if 'Enrollments' in df.columns and 'Course Name' in df.columns:
+                # Get top 10 courses by enrollment
+                top_courses = df.nlargest(10, 'Enrollments')
+                
+                fig4 = px.bar(
+                    top_courses,
+                    x='Course Name',
+                    y='Enrollments',
+                    title='Ən Çox Qeydiyyat Olan 10 Kurs',
+                    labels={'Enrollments': 'Qeydiyyat Sayı', 'Course Name': 'Kurs Adı'},
+                    color='Enrollments',
+                    color_continuous_scale='Plasma'
+                )
+                
+                fig4.update_layout(
+                    height=500,
+                    title_x=0.5,
+                    xaxis_tickangle=-45,
+                    showlegend=False
+                )
+                st.plotly_chart(fig4, use_container_width=True)
+            
+        except Exception as e:
+            st.error(f"Vizualizasiya yaradılarkən xəta baş verdi: {str(e)}")
+
+def display_data_actions(df):
+    """Display action buttons for different data views."""
+    st.markdown("""
+        <div class='action-buttons-container'>
+            <h3 class='action-title'>📊 Məlumat Analizi</h3>
+        </div>
+    """, unsafe_allow_html=True)
+    
+    # Create three columns for the buttons
+    col1, col2, col3 = st.columns(3)
+    
+    with col1:
+        if st.button("👁️ Ümumi Baxış", use_container_width=True):
+            with st.spinner("Ümumi məlumatlar hazırlanır..."):
+                prompt = get_general_overview_prompt(df)
+                response = process_query(prompt, df)
+                st.session_state.chat_history.append({"role": "user", "content": "Ümumi məlumatları göstər"})
+                st.session_state.chat_history.append({"role": "assistant", "content": response})
+                st.session_state.show_visualizations = False
+                st.rerun()
+    
+    with col2:
+        if st.button("📈 Vizualizasiyalar", use_container_width=True):
+            st.session_state.show_visualizations = not st.session_state.show_visualizations
+            st.session_state.chat_history.append({"role": "user", "content": "Vizualizasiyaları göstər"})
+            st.session_state.chat_history.append({"role": "assistant", "content": "Vizualizasiyalar yaradıldı və yuxarıda göstərilir."})
+            st.rerun()
+    
+    with col3:
+        if st.button("🧹 Təmiz Məlumatlar", use_container_width=True):
+            with st.spinner("Təmizləmə təklifləri hazırlanır..."):
+                prompt = get_cleaned_data_prompt(df)
+                response = process_query(prompt, df)
+                st.session_state.chat_history.append({"role": "user", "content": "Məlumatları təmizləmək üçün təkliflər ver"})
+                st.session_state.chat_history.append({"role": "assistant", "content": response})
+                st.session_state.show_visualizations = False
+                st.rerun()
+
 def main():
     # Create header
     create_header()
@@ -764,6 +1019,9 @@ def main():
                         </div>
                     """, unsafe_allow_html=True)
                     
+                    # Display action buttons
+                    display_data_actions(df)
+                    
                     # Display data preview and statistics
                     display_data_preview(df)
                     
@@ -777,6 +1035,13 @@ def main():
 
         # Chat interface
         if st.session_state.show_chat and st.session_state.df is not None:
+            # Display action buttons
+            display_data_actions(st.session_state.df)
+            
+            # Show visualizations if enabled
+            if st.session_state.show_visualizations:
+                create_visualizations(st.session_state.df)
+            
             # Add a button to show/hide data preview
             if st.button("📊 Məlumatları Göstər/Gizlət"):
                 if 'show_data_preview' not in st.session_state:
